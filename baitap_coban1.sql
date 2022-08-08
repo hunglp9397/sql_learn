@@ -1,40 +1,42 @@
-USE learn_mysql;
-CREATE TABLE TBLKhoa
-(Makhoa char(10)primary key,
- Tenkhoa char(30),
- Dienthoai char(10));
-CREATE TABLE TBLGiangVien(
-Magv int primary key,
-Hotengv char(30),
-Luong decimal(5,2),
-Makhoa char(10) references TBLKhoa);
-CREATE TABLE TBLSinhVien(
-Masv int primary key,
-Hotensv char(40),
-Makhoa char(10),foreign key (Makhoa) references TBLKhoa(MaKhoa),
-Namsinh int,
-Quequan char(30));
-CREATE TABLE TBLDeTai(
-Madt char(10)primary key,
-Tendt char(30),
-Kinhphi int,
-Noithuctap char(30));
-CREATE TABLE TBLHuongDan(
-Masv int primary key,
-Madt char(10), foreign key (Madt) references TBLDeTai(Madt),
-Magv int, foreign key (Magv) references TBLGiangVien(Magv),
-KetQua decimal(5,2));
-INSERT INTO TBLKhoa VALUES
+USE student_management;
+CREATE TABLE TBLMAJOR
+(major_id char(10) primary key,
+ marjor_name char(30),
+ phone_number char(11));
+CREATE TABLE TBLTEACHER(
+teacher_id int primary key,
+teacher_name char(30),
+salary decimal(5,2),
+major_id char(10) references TBLMAJOR(major_id));
+
+CREATE TABLE TBLSTUDENT(
+student_id int primary key,
+student_name char(40),
+major_id char(10),foreign key (major_id) references TBLMAJOR(major_id),
+year_of_birth int,
+address char(30));
+CREATE TABLE TBLTOPIC(
+topic_id char(10)primary key,
+topic_name char(30),
+fee int,
+intern_location char(30));
+CREATE TABLE TBLGUIDE(
+student_id int primary key,
+topic_id char(10), foreign key (topic_id) references TBLTOPIC(topic_id),
+teacher_id int, foreign key (teacher_id) references TBLTEACHER(teacher_id),
+result int);
+
+INSERT INTO tblmajor VALUES
 ('Geo','Dia ly va QLTN',3855413),
 ('Math','Toan',3855411),
 ('Bio','Cong nghe Sinh hoc',3855412);
-INSERT INTO TBLGiangVien VALUES
+INSERT INTO tblteacher VALUES
 (11,'Thanh Binh',700,'Geo'),    
 (12,'Thu Huong',500,'Math'),
 (13,'Chu Vinh',650,'Geo'),
 (14,'Le Thi Ly',500,'Bio'),
 (15,'Tran Son',900,'Math');
-INSERT INTO TBLSinhVien VALUES
+INSERT INTO tblstudent VALUES
 (1,'Le Van Son','Bio',1990,'Nghe An'),
 (2,'Nguyen Thi Mai','Geo',1990,'Thanh Hoa'),
 (3,'Bui Xuan Duc','Math',1992,'Ha Noi'),
@@ -43,12 +45,12 @@ INSERT INTO TBLSinhVien VALUES
 (6,'Tran Khac Trong','Geo',1991,'Thanh Hoa'),
 (7,'Le Thi Van','Math',null,'null'),
 (8,'Hoang Van Duc','Bio',1992,'Nghe An');
-INSERT INTO TBLDeTai VALUES
+INSERT INTO TBLTOPIC VALUES
 ('Dt01','GIS',100,'Nghe An'),
 ('Dt02','ARC GIS',500,'Nam Dinh'),
 ('Dt03','Spatial DB',100, 'Ha Tinh'),
 ('Dt04','MAP',300,'Quang Binh' );
-INSERT INTO TBLHuongDan VALUES
+INSERT INTO TBLGUIDE VALUES
 (1,'Dt01',13,8),
 (2,'Dt03',14,0),
 (3,'Dt03',12,10),
@@ -92,7 +94,7 @@ SELECT HD.Masv
 FROM TBLHuongDan HD 
 WHERE SV.Masv = HD.Masv);
 
--- cau 7 :Đưa ra mã khoa, tên khoa và số giảng viên của mỗi khoa
+-- cau 7 :Đưa ra mã khoa, tên khoa và số giảng viêntblgiangvien của mỗi khoa
 
 select k.Makhoa, k.Tenkhoa, count(gv.Magv) as sogiangvien from tblkhoa k 
 join tblgiangvien gv on gv.Makhoa =k.Makhoa
@@ -118,6 +120,15 @@ select dt.Madt, dt.Tendt from tbldetai dt
 join tblhuongdan hd on dt.Madt = hd.Madt
 join tblgiangvien gv on gv.Magv = hd.Magv
 where gv.Hotengv = 'Tran Son';
+
+-- 1.1 : Cho biết thong tin của sinh viên do giảng viên 'Tran son' hướng dẫn
+select * from tblsinhvien sv
+join tblhuongdan hd on hd.Masv = sv.Masv
+join tblgiangvien gv on hd.Magv = gv.Magv
+where gv.Hotengv =  'Chu Vinh';
+
+
+
 
 -- 2 Cho biết tên đề tài không có sinh viên nào thực tập
 
@@ -169,7 +180,6 @@ where dt.Noithuctap = sv.Quequan;
 
 
 -- 9 Hãy cho biết thông tin về những sinh viên chưa có điểm thực tập
-
 SELECT *
 FROM TBLSinhVien SV JOIN TBLHuongDan HD
 ON HD.Masv = SV.Masv
