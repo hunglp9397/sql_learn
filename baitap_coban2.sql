@@ -55,10 +55,38 @@ INSERT INTO `diemhp` VALUES (2,2,5.9),(2,3,4.5),(3,1,4.3),(3,2,6.7),(3,3,7.3),(4
 INSERT INTO `dmhocphan` VALUES (1,'Toán cao cấp A1',4,'480202',1),(2,'Tiếng Anh 1',3,'480202',1),(3,'Vật lý đại cương',4,'480202',1),(4,'Tiếng Anh 2',7,'480202',1),(5,'Tiếng Anh 1',3,'140909',2),(6,'Xác suất thống kê',3,'140909',2);
 INSERT INTO `dmkhoa` VALUES ('CNTT','Công nghệ thông tin '),('KT',' Kế toán'),('SP','Sư phạm');
 INSERT INTO `dmlop` VALUES ('CT11','Cao đẳng tin học',480202,11,'TC',2013),('CT12','Cao đẳng tin học',480202,12,'CĐ',2013),('CT13','Cao đẳng tin học',480202,13,'CĐ',2014);
-INSERT INTO `dmnganh` VALUES (140902,'Sư phạm toán tin','CNTT'),(480202,'Tin học ứng dụng ','CNTT');
+INSERT INTO `dmngdiemhpdmhocphananh` VALUES (140902,'Sư phạm toán tin','CNTT'),(480202,'Tin học ứng dụng ','CNTT');
 INSERT INTO `sinhvien` VALUES (1,'Phan Thanh ',0,'1990-12-09','Tuyen Quang','CT12'),(2,'Nguyễn Thị Cẩm',1,'1994-12-01','Quy Nhơn','CT12'),(3,'Võ Thị Hà',1,'1995-02-07','Anh Nhơn','CT12'),(4,'Trần Hoài Nam',0,'1994-05-04','Tây Sơn','CT12'),(5,'Trần Văn Hoàng',0,'1995-04-08','Vĩnh Thạnh','CT13'),(6,'Đặng Thị Thảo',1,'1995-12-06','Quy Nhơn','CT13'),(7,'Lê Thị Sen',1,'1994-12-08','Phù Cát','CT13'),(8,'Nguyễn Văn Huy',0,'1995-04-06','Phù Mỹ','CT11'),(9,'Trần Thị Hoa',1,'1994-09-08','Hoài Nhơn','CT11');
 
 
 
+-- 1 Hiển thị danh sách gồm MaSV, HoTên, MaLop, DiemHP, MaHP của những sinh viên có điểm HP >= 5.
+SELECT sv.masv, sv.hoten, l.malop, dhp.diemhp, dhp.mahp FROM sinhvien sv
+JOIN diemhp dhp on sv.masv = dhp.masv 
+JOIN dmlop l on l.malop = sv.malop
+where diemhp >=5;
+
+-- 2  Hiển thị danh sách MaSV, HoTen , MaLop, MaHP, DiemHP được sắp xếp theo ưu tiên Mã lớp, Họ tên tăng dần
+SELECT sv.MaSV, sv.HoTen, L.MaLop, L.TenLop ,HP.DiemHP,
+HP.MaHP
+FROM SINHVIEN SV
+INNER JOIN DIEMHP HP ON HP.MaSV=SV.MaSV
+INNER JOIN DMLOP L ON SV.MaLop= L.MaLop
+ORDER BY L.MaLop, SV.HoTen ASC;
+
+-- 3. Hiển thị danh sách gồm MaSV, HoTen, MaLop, DiemHP, MaHP của những sinh viên có điểm HP từ 5 đến 7 ở học kỳ I
+SELECT sv.masv, sv.hoten, l.malop, dhp.diemhp, hp.mahp, hp.hocky
+from sinhvien sv
+join dmlop l on l.malop = sv.malop
+join diemhp dhp on dhp.masv = sv.masv
+join dmhocphan hp on hp.mahp = dhp.mahp
+where (dhp.diemhp >= 5 and dhp.diemhp <= 7 ) and hp.hocky = 1;
 
 
+-- 4 Hiển thị danh sách sinh viên gồm MaSV, HoTen, MaLop, TenLop, MaKhoa của Khoa có mã CNTT
+SELECT sv.MaSV, sv.HoTen, sv.MaLop, l.TenLop, k.MaKhoa
+FROM SINHVIEN sv
+INNER JOIN dmlop l  ON sv.MaLop=l.MaLop
+INNER JOIN DMNGANH N ON n.MaNganh=l.MaNganh
+INNER JOIN dmkhoa K on k.makhoa = n.makhoa
+WHERE k.MaKhoa='CNTT';
