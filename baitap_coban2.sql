@@ -60,6 +60,14 @@ INSERT INTO `sinhvien` VALUES (1,'Phan Thanh ',0,'1990-12-09','Tuyen Quang','CT1
 
 
 
+-- 0.01 Cho biết các sinh viên đang theo học
+select * from sinhvien sv  where exists (select dhp.masv from diemhp dhp where dhp.masv = sv.masv);
+
+
+-- 0.02 Cho biết các sinh viên đang ko theo học
+
+select * from sinhvien sv where not exists (select dhp.masv from diemhp dhp where dhp.masv = sv.masv);
+
 -- 1 Hiển thị danh sách gồm MaSV, HoTên, MaLop, DiemHP, MaHP của những sinh viên có điểm HP >= 5.
 SELECT sv.masv, sv.hoten, l.malop, dhp.diemhp, dhp.mahp FROM sinhvien sv
 JOIN diemhp dhp on sv.masv = dhp.masv 
@@ -90,3 +98,24 @@ INNER JOIN dmlop l  ON sv.MaLop=l.MaLop
 INNER JOIN DMNGANH N ON n.MaNganh=l.MaNganh
 INNER JOIN dmkhoa K on k.makhoa = n.makhoa
 WHERE k.MaKhoa='CNTT';
+
+
+-- ---------------------------------CÂU LỆNH PHÂN NHÓM ---------------------------------------------------------
+
+-- 1. Cho biết MaLop, TenLop, tổng số sinh viên của mỗi lớp.
+
+select l.malop, l.tenlop, count(sv.masv) as sosinhvien from dmlop l join sinhvien sv on l.malop = sv.malop group by l.malop, l.tenlop;
+
+-- 2.Cho biết điểm trung bình chung của mỗi sinh viên, xuất ra bảng mới có tên DIEMTBC, biết rằng công thức tính DiemTBC như sau:
+-- DiemTBC = Tổng sích ma (DiemHP * SoDvht) / tổng sích ma (SoDvht)
+
+select dhp.masv, sv.hoten, sum(dhp.diemhp * hp.sodvht) / sum(hp.sodvht) as diemtbc from dmhocphan hp
+ join diemhp dhp on dhp.mahp = hp.mahp 
+ join sinhvien sv on sv.masv = dhp.masv
+ group by dhp.masv;
+
+
+
+
+
+
