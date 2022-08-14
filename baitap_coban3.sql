@@ -66,7 +66,6 @@ where  EXTRACT(MONTH FROM ngaylaphd) = 3;
 select * from hanghoa hh where exists (select cthd.mah from chitiethd cthd where cthd.mah = hh.maH);
 
 -- 6.1 Cho biết danh sách các mặt hàng ko được bán
-
 select * from hanghoa hh where not exists (select cthd.mah from chitiethd cthd where cthd.mah = hh.mah);
 
 

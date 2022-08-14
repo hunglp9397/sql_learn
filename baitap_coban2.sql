@@ -114,8 +114,33 @@ select dhp.masv, sv.hoten, sum(dhp.diemhp * hp.sodvht) / sum(hp.sodvht) as diemt
  join sinhvien sv on sv.masv = dhp.masv
  group by dhp.masv;
 
+-- Cho biết điểm trung bình chung của mỗidiemhpdmhocphan sinh viên ở mỗi học kỳ
+SELECT HocKy,MaSV,SUM(DiemHP*Sodvht)/SUM(Sodvht) AS
+DiemTBC
+FROM DMHOCPHAN
+INNER JOIN DIEMHP ON DMHOCPHAN.MaHP=DIEMHP.MaHP
+GROUP BY HocKy, MAsv;
+
+-- Cho biết mã lớp, tên lớp, số lượng nam nữ theo lớp
+SELECT SINHVIEN.MaLop,Tenlop,CASE GioiTinh WHEN 0
+THEN N'Nữ' ELSE N'Nam' END AS GioiTinh, COUNT(MaSV)
+AS Soluong
+FROM DMLOP
+INNER JOIN SINHVIEN ON DMLOP.MaLop=SINHVIEN.MaLop
+GROUP BY SINHVIEN.MaLop,Tenlop,gioitinh
+ORDER BY SINHVIEN.MaLop;
+
+-- =========================== Câu lệnh cấu trúc lồng nhau ============
+-- 1. Cho biết họ tên sinh viên không học học phần nào
+select * from sinhvien sv where masv not in (select masv from diemhp);
+
+select * from dmhocphan;
 
 
 
+-- 2. Cho biết sinh viên ko học học phần có mã 1;
+select * from sinhvien sv where masv not in (select masv from diemhp where mahp = 01);
+
+-- 3. Cho biết tên học phần không có sinhvien điểm hp < 5;
 
 
