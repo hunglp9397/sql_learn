@@ -142,5 +142,25 @@ select * from dmhocphan;
 select * from sinhvien sv where masv not in (select masv from diemhp where mahp = 01);
 
 -- 3. Cho biết tên học phần không có sinhvien điểm hp < 5;
+select * from dmhocphan hp where mahp not in (select mahp from diemhp where diemhp < 5);
+
+-- 4. Cho biết sinhvieen không có học phần điểm < 5
+select * from sinhvien sv where masv not in (select masv from diemhp where diemhp < 5);
+
+
+-- ============================Cấu trúc lồng nhau không kết nối===========
+-- 1.cho biết tên lớp có sinh viên tên Hoa
+select * from dmlop where malop in (select malop from sinhvien where hoten like N'%Hoa');
+
+-- 2. Cho biết HoTen sinh viên có điểm học phần ‘001’ và <5
+select * from sinhvien where masv in (select masv from diemhp where diemhp < 5 and mahp = 1);
+
+select * from sinhvien sv 
+join diemhp dhp on dhp.masv = sv.masv
+where dhp.mahp = 1 and dhp.diemhp < 5;
+
+-- 3. Cho biết danh sách các học phần có số lượng đơn vị lớn hơn hoặc bằng số đơn vị học phần mã 01
+select * from dmhocphan where sodvht >= (select sodvht from dmhocphan where mahp = 1);
+
 
 
