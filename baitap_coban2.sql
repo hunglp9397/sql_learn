@@ -162,5 +162,25 @@ where dhp.mahp = 1 and dhp.diemhp < 5;
 -- 3. Cho biết danh sách các học phần có số lượng đơn vị lớn hơn hoặc bằng số đơn vị học phần mã 01
 select * from dmhocphan where sodvht >= (select sodvht from dmhocphan where mahp = 1);
 
+-- ==================================== Câu truy vấn với lượng từ all, any , exists =========================
+-- Lượng từ all
+-- 1. Cho biết sinhvien có điểm hp cao nhất
+SELECT SINHVIEN.MaSV, HoTen, MaHP, DiemHP
+FROM DIEMHP JOIN SINHVIEN ON SINHVIEN.MaSV=DIEMHP.MaSV
+WHERE DiemHP >=ALL(SELECT DiemHP FROM DIEMHP );
 
+-- 2. Cho biết sinhvien có tuổi cao nhất
+SELECT HoTen, YEAR(curdate())-YEAR(NgaySinh) as tuoicaonhat
+FROM SINHVIEN
+WHERE YEAR(curdate())-YEAR(NgaySinh) >=
+ALL (SELECT YEAR(curdate())-YEAR(NgaySinh)
+FROM SINHVIEN);
+
+-- 3. cho biết sinhvieen có điểm học phần mã 001 cao nhất
+select * from sinhvien sv
+join diemhp dhp on dhp.masv = sv.masv 
+where dhp.diemhp >= ALL(SELECT diemhp from diemhp where mahp = 1);
+
+-- Lượng từ any
+-- 1. select * from sinhvien
 
