@@ -184,3 +184,10 @@ where dhp.diemhp >= ALL(SELECT diemhp from diemhp where mahp = 1);
 -- Lượng từ any
 -- 1. select * from sinhvien
 
+-- * tạo bảng diemtbc
+SELECT MaSV, SUM(DiemHP*Sodvht)/SUM(Sodvht) AS
+DiemTBC
+INTO DIEMTBC
+FROM DMHOCPHAN INNER JOIN DIEMHP ON
+DMHOCPHAN.MaHP=DIEMHP.MaHP
+GROUP BY MaSV
